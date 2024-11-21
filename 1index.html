@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Invitación</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&display=swap">
+    <style>
+        /* Estilos generales */
+        body {
+            font-family: 'Playfair Display', serif;
+            color: #333;
+            background-color: #eaf7e0; /* Fondo verde claro */
+            background-image: url('https://www.transparenttextures.com/patterns/paper.png'); /* Textura ligera */
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            position: relative;
+            box-shadow: inset 0 0 15px rgba(255, 255, 255, 0.3), inset 0 0 25px rgba(255, 255, 255, 0.1); /* Brillos en el fondo */
+        }
+
+        /* Fondo decorativo con más tacones */
+        .background-decor {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background-image: url('./imagenes/tacon.png'); /* Usa una imagen con decoraciones de 15 años (flores, estrellas) */
+            background-size: 10%; /* Ajustamos el tamaño de los tacones */
+            background-repeat: repeat; /* Repetimos los tacones en todo el fondo */
+            background-position: center;
+            opacity: 0.2; /* Baja opacidad para crear un efecto sutil */
+        }
+
+        /* Contenedor principal */
+        .welcome-screen {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            position: relative;
+            text-align: center;
+        }
+
+        /* Estilo del sobre */
+        .envelope {
+            position: relative;
+            width: 300px; /* Tamaño mayor */
+            height: 250px; /* Tamaño mayor */
+            background: white;
+            border: 3px solid black;
+            border-radius: 10px;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+            transform: perspective(600px) rotateX(10deg); /* Agregar perspectiva para darle un toque 3D */
+            animation: bounce 1s ease-in-out infinite; /* Animación de rebote suave */
+        }
+
+        /* Número en el sobre */
+        .envelope-number {
+            position: absolute;
+            top: 20%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 10rem; /* Aumentar el tamaño del 15 */
+            font-weight: bold;
+            color: #d4af37;
+            text-shadow: 0 0 20px rgba(255, 255, 255, 0.9), 0 0 30px rgba(212, 175, 55, 1); /* Efecto neón brillante */
+            opacity: 1;
+            transition: opacity 0.6s ease-out;
+        }
+
+        /* Nombre debajo del número */
+        .envelope-name {
+            position: absolute;
+            bottom: 5%;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 4rem; /* Aumentar tamaño del nombre */
+            font-weight: bold;
+            color: #d4af37;
+            text-shadow: 0 0 20px rgba(255, 255, 255, 0.9), 0 0 30px rgba(212, 175, 55, 1);
+            opacity: 1;
+            transition: opacity 0.6s ease-out;
+        }
+
+        /* Contenido dentro del sobre */
+        .envelope-content {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: absolute;
+            top: 60%; /* Ajustar la posición para dar espacio */
+            left: 50%;
+            transform: translate(-50%, -50%);
+            opacity: 0;
+            font-size: 2rem; /* Tamaño más grande */
+            font-weight: bold;
+            color: #004d40;
+            transition: opacity 1s ease-in-out;
+        }
+
+        /* Líneas horizontales visibles antes de abrir el sobre */
+        .envelope .line1, .envelope .line2 {
+            position: absolute;
+            top: 20px;
+            width: 100%;
+            height: 3px;
+            background-color: black;
+            opacity: 1; /* Visibles desde el principio */
+        }
+
+        .envelope .line1 {
+            left: 0;
+        }
+
+        .envelope .line2 {
+            right: 0;
+        }
+
+        /* Animación de apertura del sobre */
+        .envelope.open .envelope-number {
+            opacity: 0; /* El número desaparece al abrir el sobre */
+        }
+
+        .envelope.open .envelope-name {
+            opacity: 0; /* El nombre también desaparece */
+        }
+
+        .envelope.open .envelope-content {
+            opacity: 1;
+        }
+
+        .envelope.open .line1, .envelope.open .line2 {
+            opacity: 0; /* Las líneas desaparecen cuando el sobre se abre */
+        }
+
+        /* Mensaje emergente */
+        .welcome-message {
+            font-size: 2rem; /* Tamaño mayor */
+            font-weight: bold;
+            margin-top: 20px;
+            color: #012e02f1;
+            animation: fadeIn 2s ease-in-out;
+        }
+
+        /* Botón para continuar */
+        .enter-btn {
+            background: #042900;
+            color: #fff;
+            border: none;
+            padding: 15px 30px;
+            font-size: 1.5rem;
+            font-weight: bold;
+            border-radius: 30px;
+            cursor: pointer;
+            margin-top: 40px; /* Mover el botón hacia abajo */
+            position: relative;
+            opacity: 0; /* Inicialmente oculto */
+            animation: none; /* Sin animación inicial */
+        }
+
+        @keyframes slideIn {
+            0% {
+                left: -100%;
+                opacity: 0;
+            }
+            100% {
+                left: 50%;
+                transform: translateX(-50%);
+                opacity: 1;
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        /* Estilo del mensaje de abrir sobre */
+        .open-envelope-message {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #004d40;
+            margin-bottom: 20px;
+        }
+
+        /* Estilo del emoji secreto */
+        .secret-emoji {
+            position: absolute;
+            font-size: 5rem;
+            cursor: pointer;
+            animation: moveEmoji 10s linear infinite; /* Reducir la velocidad de la animación */
+        }
+
+        @keyframes moveEmoji {
+            0% { left: 5%; top: 10%; }
+            25% { left: 40%; top: 30%; }
+            50% { left: 70%; top: 10%; }
+            75% { left: 80%; top: 60%; }
+            100% { left: 10%; top: 50%; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Fondo con decoraciones de 15 años -->
+    <div class="background-decor"></div>
+
+    <!-- Encabezado con el sobre de invitación -->
+    <header class="welcome-screen">
+        <!-- Mensaje "Abrir sobre" justo arriba del sobre -->
+        <p class="open-envelope-message" id="open-envelope-message">¡Haz clic para abrir el sobre!</p>
+
+        <div class="envelope" onclick="openEnvelope()">
+            <div class="line1"></div>
+            <div class="line2"></div>
+            <div class="envelope-number" id="envelope-number">15</div> <!-- Número dentro del sobre -->
+            <div class="envelope-name">Dayana</div> <!-- Nombre debajo del número -->
+            <div class="envelope-content">¡Estás Invitado!</div>
+        </div>
+
+        <p class="welcome-message">"La fuerza y honor son su vestidura; y se ríe de lo por venir." - Proverbios 31:25</p>
+        
+        <!-- El botón aparece después de abrir el sobre y tiene animación -->
+        <button class="enter-btn" id="enter-btn" onclick="goToNextPage()">Siguiente</button>
+
+        <!-- Emoji secreto -->
+        <span class="secret-emoji" onclick="goToSecretPage()">👑</span>
+    </header>
+
+    <script>
+        // Función para abrir el sobre
+        function openEnvelope() {
+            const envelope = document.querySelector('.envelope');
+            const openMessage = document.getElementById('open-envelope-message');
+            const enterBtn = document.getElementById('enter-btn');
+
+            envelope.classList.add('open');
+            openMessage.style.display = 'none'; // Ocultar mensaje de apertura
+            enterBtn.style.animation = 'slideIn 1s ease-out forwards'; // Animar botón
+            enterBtn.style.opacity = 1; // Mostrar botón después de abrir el sobre
+        }
+
+        // Función para redirigir a la página de siguiente etapa
+        function goToNextPage() {
+            window.location.href = "2index.html"; // Redirige a la página indicada
+        }
+
+        // Función para redirigir a la página secreta cuando se hace clic en el emoji
+        function goToSecretPage() {
+            window.location.href = "Sindex.html"; // Redirige a la página secreta
+        }
+    </script>
+</body>
+</html>

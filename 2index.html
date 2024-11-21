@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- Ajuste de vista en móviles -->
+    <title>Celebración de 15 Años - Confirmación</title>
+    <link rel="stylesheet" href="style2.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
+    <script src="https://maps.googleapis.com/maps/api/js?key=TU_API_KEY&callback=initMap" async defer></script>
+    <style>
+       
+       
+       body {
+            font-family: 'Playfair Display', serif;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        .section {
+            padding: 20px;
+        }
+
+        h1, h2 {
+            text-align: center;
+            color: #ffffff7e;
+        }
+
+        #map {
+            height: 400px;
+            width: 100%;
+            border-radius: 8px;
+        }
+
+        .confirm-btn, .location-btn, button {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            text-align: center;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+
+        .confirm-btn:hover, .location-btn:hover, button:hover {
+            background-color: #45a049;
+        }
+
+        .music-control {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background-color: rgba(33, 129, 1, 0.677);
+            padding: 10px;
+            border-radius: 50%;
+            cursor: pointer;
+            z-index: 10;
+        }
+
+        .music-icon {
+            font-size: 24px;
+            color: white;
+        }
+
+        .photo-carousel img {
+            width: 100%;
+            height: auto;
+            margin-bottom: 10px;
+        }
+
+        .timeline {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .timeline-item {
+            margin: 10px 0;
+            text-align: center;
+        }
+
+        #chat-box {
+            border: 1px solid #ddd;
+            padding: 10px;
+            margin-bottom: 20px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .message {
+            margin: 5px 0;
+        }
+
+        @media (max-width: 768px) {
+            .section {
+                padding: 15px;
+            }
+
+            .confirm-btn, .location-btn, button {
+                width: 100%;
+                margin-bottom: 10px;
+            }
+
+            #map {
+                height: 300px;
+            }
+
+            .timeline {
+                flex-direction: column;
+            }
+
+            .music-control {
+                top: 10px;
+                right: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="welcome-screen">
+        <h1>¡Bienvenidos a la Celebración de 15 Años!</h1>
+        <p>Estamos muy felices de contar con tu presencia en este evento tan especial.</p>
+    </header>
+
+    <!-- Cuenta Regresiva y Confirmación -->
+    <div id="countdown-section">
+        <h2>Cuenta Regresiva para el Evento</h2>
+        <div id="countdown">
+            <span id="days"></span>días 
+            <span id="hours"></span>horas 
+            <span id="minutes"></span>minutos 
+            <span id="seconds"></span>segundos
+        </div>
+        <div id="event-date">Evento el 15 de Diciembre de 2024</div>
+    </div>
+
+    <script>
+        // Asegúrate de que el documento esté completamente cargado antes de ejecutar el script
+        document.addEventListener("DOMContentLoaded", function() {
+           // Definir la fecha del evento (15 de febrero de 2025 a las 5:00 PM)
+const eventDate = new Date("2025-02-15T17:00:00").getTime();
+
+
+            // Intervalo para actualizar la cuenta regresiva cada segundo
+            const countdownInterval = setInterval(function() {
+                // Fecha y hora actual
+                const now = new Date().getTime();
+                
+                // Diferencia entre la fecha del evento y la actual
+                const distance = eventDate - now;
+
+                console.log("Diferencia de tiempo en milisegundos: ", distance);
+
+                // Si la fecha ya pasó, detener la cuenta regresiva
+                if (distance < 0) {
+                    clearInterval(countdownInterval);
+                    document.getElementById("countdown").innerHTML = "¡Es el gran día!";
+                } else {
+                    // Calcular días, horas, minutos y segundos restantes
+                    const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+                    const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                    const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                    const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+                    // Asegurémonos de que los valores de los elementos están siendo actualizados
+                    console.log("Días: ", days, "Horas: ", hours, "Minutos: ", minutes, "Segundos: ", seconds);
+
+                    // Actualizar el contenido de los spans con los valores calculados
+                    document.getElementById("days").textContent = days;
+                    document.getElementById("hours").textContent = hours;
+                    document.getElementById("minutes").textContent = minutes;
+                    document.getElementById("seconds").textContent = seconds;
+                }
+            }, 1000); // Actualiza cada segundo
+        });
+    </script>
+
+
+
+    <!-- Pop-Up de Confirmación -->
+    <div id="popup" class="popup hidden">
+        <p>Gracias por confirmar tu asistencia. ¡Te esperamos con ansias!</p>
+        <button onclick="closePopup()">Cerrar</button>
+    </div>
+
+
+    <!-- Sección del mapa -->
+    <div id="location-section">
+        <div class="location-container">
+            <div class="image-slider">
+                <button class="arrow left">&#10094;</button>
+
+                <div class="image-container">
+                    <img src="./imagenes/foto1.jpeg" alt="Image 1" class="location-image">
+                    <img src="./imagenes/foto2.jpeg" alt="Image 2" class="location-image">
+                    <img src="./imagenes/foto3.jpeg" alt="Image 3" class="location-image">
+                </div>
+
+                <button class="arrow right">&#10095;</button>
+            </div>
+
+            <div class="location-info">
+                <div class="location-map">
+                    <img src="./imagenes/mapa.png" alt="Mapa de ubicación" width="100%" height="300" style="border-radius: 15px; box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);">
+                </div>
+                <a href="https://maps.app.goo.gl/yAhw6YVZ5V3q9eRu7" target="_blank">
+                    <button class="location-btn">
+                        Ir a Google Maps
+                    </button>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Control de Música (si deseas mantener el control) -->
+<div class="music-control" onclick="toggleMusic()">
+    <div class="music-icon" id="music-icon">🎶</div>
+</div>
+
+<!-- Elemento de Audio -->
+<audio id="background-music" autoplay>
+    <source src="./musica/cielo.ogg" type="audio/mpeg">
+    Tu navegador no soporta el formato de audio.
+</audio>
+
+<script>
+    // Función para alternar entre reproducir o pausar la música
+    function toggleMusic() {
+        var music = document.getElementById('background-music');
+        var icon = document.getElementById('music-icon');
+
+        if (music.paused) {
+            music.play();
+            icon.textContent = "🔊";  // Cambia el icono a volumen activado
+        } else {
+            music.pause();
+            icon.textContent = "🎶";  // Cambia el icono a volumen silenciado
+        }
+    }
+</script>
+
+    </style>
+</head>
+<body>
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Carrusel de Eventos</title>
+        <link rel="stylesheet" href="styles.css">
+    </head>
+    <body>
+  <!-- Carrusel de imágenes con Línea de Tiempo -->
+<div class="carousel-container">
+    <div class="carousel" id="carousel">
+      <!-- Imágenes del carrusel y eventos de la línea de tiempo -->
+        <div class="carousel-item" onclick="showEvent(0)">
+            <div class="event-description">
+                <p>Evento 1 Importante</p>
+                <p>Descripción del Evento 1</p>
+            </div>
+            <img src="./imagenes/dayana1.jpeg" alt="Imagen 1">
+        </div>
+        <div class="carousel-item" onclick="showEvent(1)">
+            <div class="event-description">
+                <p>Evento 2 Importante</p>
+                <p>Descripción del Evento 2</p>
+            </div>
+            <img src="./imagenes/dayana2.jpeg" alt="Imagen 2">
+        </div>
+        <div class="carousel-item" onclick="showEvent(2)">
+            <div class="event-description">
+                <p>Evento 3 Importante</p>
+                <p>Descripción del Evento 3</p>
+            </div>
+            <img src="./imagenes/dayana3.jpeg" alt="Imagen 3">
+        </div>
+        <div class="carousel-item" onclick="showEvent(3)">
+            <div class="event-description">
+                <p>Evento 4 Importante</p>
+                <p>Descripción del Evento 4</p>
+            </div>
+            <img src="./imagenes/dayana4.jpeg" alt="Imagen 4">
+        </div>
+        <div class="carousel-item" onclick="showEvent(4)">
+            <div class="event-description">
+                <p>Evento 5 Importante</p>
+                <p>Descripción del Evento 5</p>
+            </div>
+            <img src="./imagenes/dayana5.jpeg" alt="Imagen 5">
+        </div>
+        <div class="carousel-item" onclick="showEvent(5)">
+            <div class="event-description">
+                <p>Evento 6 Importante</p>
+                <p>Descripción del Evento 6</p>
+            </div>
+            <img src="./imagenes/dayana6.jpeg" alt="Imagen 6">
+        </div>
+        <div class="carousel-item" onclick="showEvent(6)">
+            <div class="event-description">
+                <p>Evento 7 Importante</p>
+                <p>Descripción del Evento 7</p>
+            </div>
+            <img src="./imagenes/dayana7.jpeg" alt="Imagen 7">
+        </div>
+        <div class="carousel-item" onclick="showEvent(7)">
+            <div class="event-description">
+                <p>Evento 8 Importante</p>
+                <p>Descripción del Evento 8</p>
+            </div>
+            <img src="./imagenes/dayana8.jpeg" alt="Imagen 8">
+        </div>
+        <div class="carousel-item" onclick="showEvent(8)">
+            <div class="event-description">
+                <p>Evento 9 Importante</p>
+                <p>Descripción del Evento 9</p>
+            </div>
+            <img src="./imagenes/dayana9.jpeg" alt="Imagen 9">
+        </div>
+        <div class="carousel-item" onclick="showEvent(9)">
+            <div class="event-description">
+                <p>Evento 10 Importante</p>
+                <p>Descripción del Evento 10</p>
+            </div>
+            <img src="./imagenes/dayana10.jpeg" alt="Imagen 10">
+        </div>
+        <div class="carousel-item" onclick="showEvent(10)">
+            <div class="event-description">
+                <p>Evento 11 Importante</p>
+                <p>Descripción del Evento 11</p>
+            </div>
+            <img src="./imagenes/dayana11.jpeg" alt="Imagen 11">
+        </div>
+        <div class="carousel-item" onclick="showEvent(11)">
+            <div class="event-description">
+                <p>Evento 12 Importante</p>
+                <p>Descripción del Evento 12</p>
+            </div>
+            <img src="./imagenes/dayana12.jpeg" alt="Imagen 12">
+        </div>
+        <div class="carousel-item" onclick="showEvent(12)">
+            <div class="event-description">
+                <p>Evento 13 Importante</p>
+                <p>Descripción del Evento 13</p>
+            </div>
+            <img src="./imagenes/dayana13.jpeg" alt="Imagen 13">
+        </div>
+        <div class="carousel-item" onclick="showEvent(13)">
+            <div class="event-description">
+                <p>Evento 14 Importante</p>
+                <p>Descripción del Evento 14</p>
+            </div>
+            <img src="./imagenes/dayana14.jpeg" alt="Imagen 14">
+        </div>
+        <div class="carousel-item" onclick="showEvent(14)">
+            <div class="event-description">
+                <p>Evento 15 Importante</p>
+                <p>Descripción del Evento 15</p>
+            </div>
+            <img src="./imagenes/dayana15.jpeg" alt="Imagen 15">
+        </div>
+    </div>
+<!-- Control de Música -->
+<div class="music-control" onclick="toggleMusic()">
+    <div class="music-icon" id="music-icon">🎶</div>
+</div>
+
+<!-- Elemento de Audio -->
+<audio id="background-music" autoplay loop>
+    <source src="./musica/cielo.ogg" type="audio/mpeg">
+    Tu navegador no soporta el formato de audio.
+</audio>
+
+<!-- Vincular el archivo JavaScript -->
+<script src="scripts.js"></script>
+</body>
+</html>
